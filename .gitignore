@@ -75,8 +75,8 @@ Jenkins-server-TF/.terraform.lock.hcl
 EKS-TF/.terraform.lock.hcl
 
 # Terraform variables and overrides
-*.tfvars
-*.tfvars.json
+# *.tfvars
+# *.tfvars.json
 override.tf
 override.tf.json
 *_override.tf
