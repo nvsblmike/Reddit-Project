@@ -1,12 +1,9 @@
 pipeline {
     agent any
-    environment {
-        AWS_DEFAULT_REGION = "us-east-1"
-    }
     stages {
         stage('Checkout from Git') {
             steps {
-                git branch: 'main', url: 'https://github.com/uniquesreedhar/Reddit-Project.git'
+                git branch: 'main', url: 'https://github.com/nvsblmike/Reddit-Project.git'
             }
         }
         stage('Initializing Terraform'){
