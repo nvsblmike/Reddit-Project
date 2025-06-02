@@ -19,33 +19,23 @@ pipeline {
         }
         stage('Initializing Terraform'){
             steps {
-                script {
-                    withCredentials([[
-                        $class: 'AmazonWebServicesCredentialsBinding',
-                        credentialsId: 'aws-key',
-                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-                    ]]) {
-                        dir('EKS-TF'){
-                            sh 'terraform init'
-                        }
+                withAWS(credentials: 'aws-key', region: 'us-east-1') {
+                dir('EKS-TF') {
+                    script {
+                        sh 'terraform init'
                     }
+                }
                 }
             }
         }
         stage('Validating Terraform'){
             steps {
-                script {
-                    withCredentials([[
-                        $class: 'AmazonWebServicesCredentialsBinding',
-                        credentialsId: 'aws-key',
-                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-                    ]]) {
-                        dir('EKS-TF'){
-                            sh 'terraform validate'
-                        }
+                withAWS(credentials: 'aws-key', region: 'us-east-1') {
+                dir('EKS-TF') {
+                    script {
+                        sh 'terraform validate'
                     }
+                }
                 }
             }
         }
