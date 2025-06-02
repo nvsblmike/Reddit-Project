@@ -86,6 +86,7 @@ vpn-cert/
 
 # Terraform files
 **/.terraform/*
+**/.terraform.lock.hcl
 *.tfstate
 *.tfstate.*
 crash.log
