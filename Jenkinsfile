@@ -41,33 +41,21 @@ pipeline {
         }
         stage('Terraform Plan'){
             steps {
-                script {
-                    withCredentials([[
-                        $class: 'AmazonWebServicesCredentialsBinding',
-                        credentialsId: 'aws-key',
-                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-                    ]]) {
-                        dir('EKS-TF'){
-                            sh 'terraform plan -var-file=variables.tfvars'
-                        }
+                withAWS(credentials: 'aws-key', region: 'us-east-1') {
+                dir('EKS-TF') {
+                    script {
+                        sh "terraform plan -var-file=${params.'File-Name'}"
                     }
+                }
                 }
             }
         }
         stage('Creating/Destroying EKS Cluster'){
             steps {
-                script {
-                    withCredentials([[
-                        $class: 'AmazonWebServicesCredentialsBinding',
-                        credentialsId: 'aws-key',
-                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-                    ]]) {
+                withAWS(credentials: 'aws-key', region: 'us-east-1') {
                         dir('EKS-TF'){
                             sh 'terraform $action -var-file=variables.tfvars -auto-approve'
                         }
-                    }
                 }
             }
         }
