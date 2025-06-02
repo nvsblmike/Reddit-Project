@@ -1,23 +1,19 @@
+properties([
+    parameters([
+        string(defaultValue: 'variables.tfvars', description: 'Specify the file name', name: 'File-Name'),
+        choice(choices: ['apply', 'destroy'], description: 'Select Terraform action', name: 'Terraform-Action')
+    ])
+])
+
 pipeline {
     agent any
-    environment {
-        AWS_DEFAULT_REGION = "us-east-1"
-    }
     stages {
-        stage('Checkout SCM') {
+        stage('Checkout from Git') {
             steps {
-                script {
-                    checkout([$class: 'GitSCM',
-                        branches: [[name: '*/main']],
-                        userRemoteConfigs: [[
-                            url: 'https://github.com/nvsblmike/Reddit-Project.git',
-                            credentialsId: 'github-PAT'
-                        ]]
-                    ])
-                }
+                git branch: 'main', url: 'https://github.com/nvsblmike/Reddit-Project.git'
             }
         }
-        stage('Initializing Terraform'){
+        stage('Initializing Terraform') {
             steps {
                 withAWS(credentials: 'aws-key', region: 'us-east-1') {
                 dir('EKS-TF') {
@@ -28,7 +24,7 @@ pipeline {
                 }
             }
         }
-        stage('Validating Terraform'){
+        stage('Validate Terraform Code') {
             steps {
                 withAWS(credentials: 'aws-key', region: 'us-east-1') {
                 dir('EKS-TF') {
@@ -39,7 +35,7 @@ pipeline {
                 }
             }
         }
-        stage('Terraform Plan'){
+        stage('Terraform Plan') {
             steps {
                 withAWS(credentials: 'aws-key', region: 'us-east-1') {
                 dir('EKS-TF') {
@@ -50,19 +46,25 @@ pipeline {
                 }
             }
         }
-        stage('Creating/Destroying EKS Cluster'){
+        stage('Terraform Action') {
             steps {
-                withAWS(credentials: 'aws-key', region: 'us-east-1') {
-                        dir('EKS-TF'){
-                            sh 'terraform $action -var-file=variables.tfvars -auto-approve'
+                withAWS(credentials: 'aws-key', region: 'us-east-1') { 
+                script {
+                    echo "${params.'Terraform-Action'}"
+                    dir('EKS-TF') {
+                        script {
+                            if (params.'Terraform-Action' == 'apply') {
+                                sh "terraform apply -auto-approve -var-file=${params.'File-Name'}"
+                            } else if (params.'Terraform-Action' == 'destroy') {
+                                sh "terraform destroy -auto-approve -var-file=${params.'File-Name'}"
+                            } else {
+                                error "Invalid value for Terraform-Action: ${params.'Terraform-Action'}"
+                            }
                         }
+                    }
+                }
                 }
             }
-        }
-    }
-    post {
-        always {
-            cleanWs()
         }
     }
 }
