@@ -43,7 +43,7 @@ pipeline {
             steps {
                 withAWS(credentials: 'aws-key', region: 'us-east-1') {
                         dir('EKS-TF'){
-                            sh 'terraform destroy -var-file=variables.tfvars -auto-approve'
+                            sh 'terraform apply -var-file=variables.tfvars -auto-approve'
                         }
                     }
             }
