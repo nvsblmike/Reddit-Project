@@ -5,6 +5,7 @@ sudo wget -O /etc/apt/keyrings/adoptium.asc https://packages.adoptium.net/artifa
 echo "deb [signed-by=/etc/apt/keyrings/adoptium.asc] https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | sudo tee /etc/apt/sources.list.d/adoptium.list
 sudo apt update -y
 sudo apt install temurin-17-jdk -y
+sudo apt install openjdk-11-jdk -y
 /usr/bin/java --version
 curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo tee \
                   /usr/share/keyrings/jenkins-keyring.asc > /dev/null
@@ -44,7 +45,7 @@ curl -LO https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 kubectl version --client
 
-# Install AWS CLI 
+# Install AWS CLI
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 sudo apt-get install unzip -y
 unzip awscliv2.zip
