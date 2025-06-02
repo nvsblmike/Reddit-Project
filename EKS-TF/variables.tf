@@ -10,3 +10,8 @@ variable "iam-policy-eks" {}
 variable "iam-policy-node" {}
 variable "cluster-name" {}
 variable "eksnode-group-name" {}
+variable "environment" {
+  description = "Deployment environment"
+  default     = "prod"
+}
+variable "aws_region" {}
