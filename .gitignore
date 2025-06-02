@@ -57,16 +57,18 @@ terraform.tfstate.backup
 # Ignore Terraform cache and logs
 .terraform/
 .terraform.lock.hcl
+
+./Jenkins-server-TF/.terraform/
+./Jenkins-server-TF/.terraform.lock.hcl
 crash.log
 
 # Ignore Terraform variable files that may contain secrets
 # *.tfvars
 *.tfvars.json
 
-Jenkinsfile
 
 node_modules
-Jenkinsfile
+
 .ssh/
 *.pem
 *.key
